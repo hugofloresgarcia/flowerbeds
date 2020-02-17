@@ -96,7 +96,7 @@ void ofApp::update(){
             tempSwirl.fcflower.fspiral.stepLength = 2;
             
             swirls.push_back(tempSwirl);
-
+ 
             if (swirls.size() > 2){
                 swirls.pop_front();
             }
@@ -108,17 +108,34 @@ void ofApp::update(){
                 swirls.pop_back();
             }
         }
+        if (msg.getAddress() == "/darkSwirl"){
+            bool colorBool = msg.getArgAsBool(0);
+            flowerSwirl.fcflower.fspiral.darkColors = colorBool;
+            
+        }
         if (msg.getAddress() == "/daisy"){
+            float harmonic = msg.getArgAsFloat(0);
             float amplitude = msg.getArgAsFloat(1);
             float pan = msg.getArgAsFloat(2);
+            float index = msg.getArgAsFloat(3);
+            float ratio = msg.getArgAsFloat(4);
             
             flowerCircle tempFlower;
-            tempFlower.center.x = ofRandom(20, ofGetWidth()-20);
+            tempFlower.center.x = (pan+1)/2 * ofGetWidth();
             tempFlower.center.y = int(ofRandom(20, ofGetHeight()) - 20);
             tempFlower.fcflower.fspiral.stepLength = ofMap(amplitude, 0.01, 0.5, 0.05, 2);
+//            if (index != 0){
+//                if ((int(ratio) - ratio) != 0){
+//                    tempFlower.fcflower.fspiral.stepLength += ofMap(ratio, 0, 3, 0, 5);
+//                }
+//                else {
+//                  tempFlower.fcflower.fspiral.stepLength += ofMap(ratio,0, 3, 0, 2);
+//                }
+//            }
             tempFlower.fcflower.fspiral.addNoise = true;
             tempFlower.fcflower.fspiral.niter = 50;
             tempFlower.radius = ofRandom(5, 25);
+            
             
             daisies.push_back(tempFlower);
 
@@ -129,10 +146,11 @@ void ofApp::update(){
         if (msg.getAddress() == "/lily"){
             float amplitude = msg.getArgAsFloat(1);
             float pan = msg.getArgAsFloat(2);
+            float harmonic = msg.getArgAsFloat(3);
             
             
             flowerTri tempFlower;
-            tempFlower.center.x = ofRandom(20, ofGetWidth()-20);
+            tempFlower.center.x = (pan+1)/2 * ofGetWidth();
             tempFlower.center.y = int(ofRandom(20, ofGetHeight()) - 20);
             tempFlower.fcflower.fspiral.stepLength = ofMap(amplitude, 0.01, 0.5, 1, 3);
             tempFlower.fcflower.fspiral.addNoise = true;
@@ -255,6 +273,7 @@ void ofApp::draw(){
                swirlCenter.draw();
                flowerSwirl.draw();
         }
+        
 
         ofSetColor(255,255,255);
     }

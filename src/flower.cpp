@@ -27,7 +27,7 @@ void spiral::draw(){
         a += b;
         
         if (addNoise == true){
-            b += .5 * DEG_TO_RAD + ofNoise(ofGetElapsedTimef()*0.5 + 30);
+            b += .5 * DEG_TO_RAD + ofNoise(ofGetElapsedTimef()*(0.5 + noiseIndex) + 30);
         }
         else if (deg) {
             b += .5;
@@ -36,8 +36,6 @@ void spiral::draw(){
             b += .5 * DEG_TO_RAD;
         }
 
-        
-        
         ofPoint distance(cos(a), sin(a));
         
         pos = pos + stepLength * distance;
@@ -45,9 +43,16 @@ void spiral::draw(){
         if (randomizeColor){
             if (colorStep % nColorIter == 0){
                 //generate random color
-                color = ofColor (ofRandom(128,255),
-                                ofRandom(128,255),
-                                 ofRandom(128,255));
+                if (darkColors){
+                    color = ofColor (ofRandom(128,0),
+                    ofRandom(128,0),
+                     ofRandom(128,0));
+                }
+                else{
+                    color = ofColor (ofRandom(128,255),
+                                    ofRandom(128,255),
+                                     ofRandom(128,255));
+                }
             }
         }
         ofSetColor(color);
@@ -95,7 +100,7 @@ void flowerCircle::draw(){
 
     for (int i = 0; i < numElements ; ++i){
         float oldRadius = radius;
-        swirlDepth = radius/10;
+        swirlDepth = radius/2;
         if (swirl) {
             radius = radius + swirlDepth * sin(2 * M_PI * swirlSpeed * ofGetElapsedTimef());
         }

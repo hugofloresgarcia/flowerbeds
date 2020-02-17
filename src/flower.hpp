@@ -31,6 +31,10 @@ public:
     bool deg = false;
     int lineWidth = 1;
     
+    float noiseIndex = 0;
+    
+    bool darkColors;
+    
 
     ofVec3f pos, oldPos;
     ofColor color ;
