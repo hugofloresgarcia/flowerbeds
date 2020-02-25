@@ -92,7 +92,7 @@ void ofApp::update(){
             tempSwirl.fcflower.fspiral.niter = 50;
             tempSwirl.fcflower.fspiral.a = 0;
             tempSwirl.fcflower.fspiral.b = 0;
-            tempFlower.fcflower.fspiral.nColorIter = 200;
+            tempSwirl.fcflower.fspiral.nColorIter = 200;
             tempSwirl.fcflower.fspiral.stepLength = 2;
             
             swirls.push_back(tempSwirl);

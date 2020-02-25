@@ -17,7 +17,7 @@ m = NetAddr("localhost", 57123);
 //-------------------------------------------------------------------------------------
 // CLOUDS
 //-------------------------------------------------------------------------------------
-
+// pick a sampled sound
 (
 SynthDef.new(
 	name: \clouds,
@@ -109,6 +109,42 @@ SynthDef(
 ).add;
 );
 
+(
+SynthDef(\playback, {
+	arg buffer, startPos = 0, lpfcut = 20000,  atk = 0.005, rel=0.01, amp=1, pan=0, delaytime = 0, hpfcut = 0;
+	var player, env, filter, sig, del, hpf;
+	player = PlayBuf.ar(
+		numChannels: 1,
+		bufnum: buffer,
+		rate: 1.0,
+		startPos: startPos
+	);
+	env = EnvGen.kr(
+			envelope: Env.new(
+				levels: [0, 1, 0],
+				times: [atk, rel],
+				curve: [1, -1]),
+			doneAction: 2);
+	filter = LPF.ar(
+		in: player,
+		freq: lpfcut);
+	hpf = HPF.ar(
+		in: filter,
+		freq: hpfcut);
+	del = CombN.ar(
+		in: hpf,
+		maxdelaytime: 0.05,
+		delaytime: delaytime);
+	sig = Pan2.ar(
+		in: del,
+		pos: pan);
+	Out.ar(0, env * sig * amp);
+}).add;
+);
+
+~coffee = Buffer.read(s, "/Users/hugoffg/Documents/of_v0.11.0_osx_release/apps/myApps/flowerbeds/bin/coffee.wav");
+
+
 //-------------------------------------------------------------------------------------
 // THE FLOWERS THAT RANDOMLY POP UP
 //-------------------------------------------------------------------------------------
@@ -124,7 +160,7 @@ SynthDef.new(
 		sig = SinOsc.ar(
 			freq: freq + (PinkNoise.kr()*10*freq/440);
 		);
-		env = EnvGen.kr(
+		env = EnvGen.ar(
 			envelope: Env.new(
 				levels: [0, 1, 0],
 				times: [atk, rel],
@@ -141,6 +177,43 @@ SynthDef.new(
 }).add;
 );
 
+(
+SynthDef(
+	name: \fmsynth,
+	ugenGraphFunc: {
+		arg  index, ratio, freq, atk, rel, pan, amp;
+		//index: energy of sidebands
+		//ratio: ratio of harmonics
+		//e.g. if ratio is 2:1, then you will have 1, 2, 3, 4, 5, harmonics
+		//if ratio is 3:1, then you will have odd harmonics
+		//if ratio is noninteger, there will be inharmonics and sound like a bell lol
+		var modFreq, modAmp, fm, env, osc, sig;
+		modFreq = ratio * freq;
+		modAmp = index * modFreq;
+		fm = SinOsc.ar(
+			freq: modFreq,
+			mul: modFreq * index,
+			add: freq
+		);
+		env = EnvGen.kr(
+			envelope: Env.new(
+				levels: [0, 1, 0],
+				times: [atk, rel],
+				curve: [1, -1]),
+			doneAction: 2);
+		sig = SinOsc.ar(
+			freq: fm);
+		sig = Pan2 .ar(
+			in: sig,
+			pos: pan,
+			level: amp);
+		sig = sig * env;
+		Out.ar(0, sig*0.05);
+	}
+).add;
+);
+
+
 //-------------------------------------------------------------------------------------
 // THE FLOWERS THAT RANDOMLY POP UP
 //-------------------------------------------------------------------------------------
@@ -150,7 +223,7 @@ SynthDef.new(
 (SynthDef(
 	name: \blip,
 	ugenGraphFunc: {
-		arg amp = 1;
+		arg amp = 0.6;
 		var blip, env, pan1, pan2, sig, delay, panpos, mix;
 		blip = Pulse.ar(
 			freq: Rand(200, 800),

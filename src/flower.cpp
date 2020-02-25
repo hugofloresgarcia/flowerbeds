@@ -49,9 +49,9 @@ void spiral::draw(){
                      ofRandom(128,0));
                 }
                 else{
-                    color = ofColor (ofRandom(128,255),
-                                    ofRandom(128,255),
-                                     ofRandom(128,255));
+                    color = ofColor (ofRandom(128,192),
+                                    ofRandom(128,192),
+                                     ofRandom(128,192));
                 }
             }
         }
